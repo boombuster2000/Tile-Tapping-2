@@ -11,8 +11,14 @@ struct Text
     int fontSize;
     Color colour;
     Vector2 position;
+    bool visible = true;
 };
 
+struct Button
+{
+    Text text;
+    bool selected = false;
+};
 
 /**
  * Calculates the centre position on the screen from the given text and font size.
@@ -36,28 +42,53 @@ int main(int argc, const char **argv)
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);
 
+    // Define Texts
+    Text menuTitle = {WINDOW_TITLE, 100, PURPLE};
+    menuTitle.position.x = GetTextCenterPositionOnScreen(menuTitle).x;
+    menuTitle.position.y = 50;
+
+    Button playButton = {"Play", 50, PINK};
+    playButton.text.position.y = 300;
+    playButton.selected = true;
+
+    Button exitButton = {"Exit", 50, PINK};
+    exitButton.text.position.y = playButton.text.position.y + 100;
+
+
     // Main loop
     while(!WindowShouldClose()) 
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
+        
+        // Menu Input Handling
+        if (IsKeyPressed(KEY_DOWN))
+        {
+            if (playButton.selected) {
+                playButton.selected = false;
+                playButton.text.fontSize = 50;
 
-        Text menuTitle = {WINDOW_TITLE, 100, PURPLE};
-        menuTitle.position.x = GetTextCenterPositionOnScreen(menuTitle).x;
-        menuTitle.position.y = 50;
+                exitButton.selected = true;
+                exitButton.text.fontSize = 70;
+            }
+            else 
+            {
+                exitButton.selected = false;
+                exitButton.text.fontSize = 50;
 
-        Text playButton = {"Play", 70, PINK};
-        playButton.position.x = GetTextCenterPositionOnScreen(playButton).x;
-        playButton.position.y = 300;
+                playButton.selected = true;
+                playButton.text.fontSize = 70;
+            }
+            
+        }
 
-        Text exitButton = {"Exit", 50, PINK};
-        exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
-        exitButton.position.y = playButton.position.y + 100;
+        playButton.text.position.x = GetTextCenterPositionOnScreen(playButton.text).x;
+        exitButton.text.position.x = GetTextCenterPositionOnScreen(exitButton.text).x;
 
+        //Draw Text
         DrawTextWithStuct(menuTitle);
-        DrawTextWithStuct(playButton);
-        DrawTextWithStuct(exitButton);
-
+        DrawTextWithStuct(playButton.text);
+        DrawTextWithStuct(exitButton.text);
         EndDrawing();
     }
     // Cleanup
