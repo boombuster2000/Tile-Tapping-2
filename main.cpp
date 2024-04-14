@@ -17,10 +17,12 @@ struct Text
 struct TextListNode 
 {
 	Text* text;
-	TextListNode *next;
-	TextListNode() : text(nullptr), next(nullptr) {}
-	TextListNode(Text* x) : text(x), next(nullptr) {}
-	TextListNode(Text* x, TextListNode *next) : text(x), next(next) {}
+	TextListNode* next;
+    TextListNode* before;
+	TextListNode() : text(nullptr), next(nullptr), before(nullptr) {}
+	TextListNode(Text* text) : text(text), next(nullptr), before(nullptr) {}
+	TextListNode(Text* text, TextListNode *next) : text(text), next(next), before(nullptr) {}
+	TextListNode(Text* text, TextListNode *next, TextListNode* before) : text(text), next(next), before(before) {}
 };
 
 /**
@@ -60,8 +62,9 @@ int main(int argc, const char **argv)
 
     // Circular Linked List
     TextListNode playButtonNode = {&playButton};
-    TextListNode exitButtonNode = {&exitButton, &playButtonNode};
+    TextListNode exitButtonNode = {&exitButton, &playButtonNode, &playButtonNode};
     playButtonNode.next = &exitButtonNode;
+    playButtonNode.before = &exitButtonNode;
     
     TextListNode* menuHead = &playButtonNode;
 
@@ -78,6 +81,16 @@ int main(int argc, const char **argv)
             menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
 
             menuHead = menuHead->next;
+            
+            menuHead->text->fontSize = 70;
+            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
+        }
+        else if (IsKeyPressed(KEY_UP))
+        {
+            menuHead->text->fontSize = 50;
+            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
+
+            menuHead = menuHead->before;
             
             menuHead->text->fontSize = 70;
             menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
