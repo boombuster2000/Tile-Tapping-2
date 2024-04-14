@@ -75,22 +75,13 @@ int main(int argc, const char **argv)
         ClearBackground(RAYWHITE);
         
         // Menu Input Handling
-        if (IsKeyPressed(KEY_DOWN))
-        {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_UP))
+        {  
             menuHead->text->fontSize = 50;
             menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
 
-            menuHead = menuHead->next;
-            
-            menuHead->text->fontSize = 70;
-            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
-        }
-        else if (IsKeyPressed(KEY_UP))
-        {
-            menuHead->text->fontSize = 50;
-            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
-
-            menuHead = menuHead->before;
+            if (IsKeyPressed(KEY_DOWN)) menuHead = menuHead->next;
+            else if (IsKeyPressed(KEY_UP)) menuHead = menuHead->before;
             
             menuHead->text->fontSize = 70;
             menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
