@@ -1164,3 +1164,7 @@ build/_deps/raylib-subbuild/raylib-populate-prefix/tmp/raylib-populate-cfgcmd.tx
 build/_deps/raylib-subbuild/raylib-populate-prefix/tmp/raylib-populate-mkdirs.cmake
 .vscode/
 build/.cmake/api/v1/reply/index-2024-04-14T12-18-44-0860.json
+build/CMakeFiles/TileTapping2.dir/compiler_depend.internal
+build/_deps/raylib-build/raylib/CMakeFiles/raylib.dir/compiler_depend.internal
+build/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/compiler_depend.internal
+.build/
