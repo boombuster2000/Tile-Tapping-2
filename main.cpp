@@ -4,11 +4,9 @@
  
 int main(int argc, const char **argv) {
     // Initialization
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
     const char *windowTitle = "Tile Tapping 2";
  
-    InitWindow(screenWidth, screenHeight, windowTitle);
+    InitWindow(SCREEN_HEIGHT, SCREEN_WIDTH, windowTitle);
     SetTargetFPS(60);
  
     // Main loop
