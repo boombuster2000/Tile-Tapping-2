@@ -18,6 +18,8 @@ struct Text
  * @param text The text struct that will be measured.
  * 
  * @return Vector2 of x and y positions.
+ * 
+ * @warning This function does not calculate true centre for y.
 */
 Vector2 GetTextCenterPositionOnScreen(const Text text)
 {
