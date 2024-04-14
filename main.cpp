@@ -3,6 +3,8 @@
 #define WINDOW_HEIGHT 720
 #define WINDOW_TITLE "Tile Tapping 2"
 
+#define DrawTextWithStuct(textToDraw) DrawText(textToDraw.text, textToDraw.position.x, textToDraw.position.y, textToDraw.fontSize, textToDraw.colour);
+
 struct Text
 {
     const char* text;
@@ -33,7 +35,7 @@ int main(int argc, const char **argv)
 { 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);
- 
+
     // Main loop
     while(!WindowShouldClose()) 
     {
@@ -52,9 +54,9 @@ int main(int argc, const char **argv)
         exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
         exitButton.position.y = playButton.position.y + 100;
 
-        DrawText(menuTitle.text, menuTitle.position.x, menuTitle.position.y, menuTitle.fontSize, menuTitle.colour);
-        DrawText(playButton.text, playButton.position.x, playButton.position.y, playButton.fontSize, playButton.colour);
-        DrawText(exitButton.text, exitButton.position.x, exitButton.position.y, exitButton.fontSize, exitButton.colour);
+        DrawTextWithStuct(menuTitle);
+        DrawTextWithStuct(playButton);
+        DrawTextWithStuct(exitButton);
 
         EndDrawing();
     }
