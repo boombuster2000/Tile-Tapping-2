@@ -48,8 +48,13 @@ int main(int argc, const char **argv)
         playButton.position.x = GetTextCenterPositionOnScreen(playButton).x;
         playButton.position.y = 300;
 
+        Text exitButton = {"Exit", 50, PINK};
+        exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
+        exitButton.position.y = playButton.position.y + 100;
+
         DrawText(menuTitle.text, menuTitle.position.x, menuTitle.position.y, menuTitle.fontSize, menuTitle.colour);
         DrawText(playButton.text, playButton.position.x, playButton.position.y, playButton.fontSize, playButton.colour);
+        DrawText(exitButton.text, exitButton.position.x, exitButton.position.y, exitButton.fontSize, exitButton.colour);
 
         EndDrawing();
     }
