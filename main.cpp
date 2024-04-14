@@ -1,33 +1,21 @@
 #include "raylib.h"
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
  
 int main(int argc, const char **argv) {
     // Initialization
     const int screenWidth = 1280;
-    const int screenHeight = 768;
-    const char *windowTitle = "Hello world!";
-    const char *message = "Hello world! It's great to be here.";
-    const int fontSize = 40;
-    const float msgSpacing = 1.0f;
+    const int screenHeight = 720;
+    const char *windowTitle = "Tile Tapping 2";
  
     InitWindow(screenWidth, screenHeight, windowTitle);
- 
-    // NOTE: The following only works after calling InitWindow() (i.e,. RayLib is initialized)
-    const Font font = GetFontDefault();
-    const Vector2 msgSize = MeasureTextEx(font, message, fontSize, msgSpacing);
-    const Vector2 msgPos = Vector2{(screenWidth - msgSize.x) / 2, (screenHeight - msgSize.y) / 2};
- 
     SetTargetFPS(60);
  
     // Main loop
     while(!WindowShouldClose()) {
  
-        // Update the display
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawTextEx(font, message, msgPos, fontSize, msgSpacing, RED);
-        EndDrawing();
+
     }
- 
     // Cleanup
     CloseWindow();
      
