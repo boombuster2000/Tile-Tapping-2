@@ -40,11 +40,16 @@ int main(int argc, const char **argv)
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        Text menuTitle = {WINDOW_TITLE, 50, PURPLE};
+        Text menuTitle = {WINDOW_TITLE, 100, PURPLE};
         menuTitle.position.x = GetTextCenterPositionOnScreen(menuTitle).x;
-        menuTitle.position.y = 10;
+        menuTitle.position.y = 50;
+
+        Text playButton = {"Play", 70, PINK};
+        playButton.position.x = GetTextCenterPositionOnScreen(playButton).x;
+        playButton.position.y = 300;
 
         DrawText(menuTitle.text, menuTitle.position.x, menuTitle.position.y, menuTitle.fontSize, menuTitle.colour);
+        DrawText(playButton.text, playButton.position.x, playButton.position.y, playButton.fontSize, playButton.colour);
 
         EndDrawing();
     }
