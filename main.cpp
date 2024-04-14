@@ -14,10 +14,13 @@ struct Text
     bool visible = true;
 };
 
-struct Button
+struct TextListNode 
 {
-    Text text;
-    bool selected = false;
+	Text* text;
+	TextListNode *next;
+	TextListNode() : text(nullptr), next(nullptr) {}
+	TextListNode(Text* x) : text(x), next(nullptr) {}
+	TextListNode(Text* x, TextListNode *next) : text(x), next(next) {}
 };
 
 /**
@@ -47,13 +50,20 @@ int main(int argc, const char **argv)
     menuTitle.position.x = GetTextCenterPositionOnScreen(menuTitle).x;
     menuTitle.position.y = 50;
 
-    Button playButton = {"Play", 50, PINK};
-    playButton.text.position.y = 300;
-    playButton.selected = true;
+    Text playButton = {"Play", 70, PINK};
+    playButton.position.x = GetTextCenterPositionOnScreen(playButton).x;
+    playButton.position.y = 300;
 
-    Button exitButton = {"Exit", 50, PINK};
-    exitButton.text.position.y = playButton.text.position.y + 100;
+    Text exitButton = {"Exit", 50, PINK};
+    exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
+    exitButton.position.y = playButton.position.y + 100;
 
+    // Circular Linked List
+    TextListNode playButtonNode = {&playButton};
+    TextListNode exitButtonNode = {&exitButton, &playButtonNode};
+    playButtonNode.next = &exitButtonNode;
+    
+    TextListNode* menuHead = &playButtonNode;
 
     // Main loop
     while(!WindowShouldClose()) 
@@ -64,31 +74,19 @@ int main(int argc, const char **argv)
         // Menu Input Handling
         if (IsKeyPressed(KEY_DOWN))
         {
-            if (playButton.selected) {
-                playButton.selected = false;
-                playButton.text.fontSize = 50;
+            menuHead->text->fontSize = 50;
+            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
 
-                exitButton.selected = true;
-                exitButton.text.fontSize = 70;
-            }
-            else 
-            {
-                exitButton.selected = false;
-                exitButton.text.fontSize = 50;
-
-                playButton.selected = true;
-                playButton.text.fontSize = 70;
-            }
+            menuHead = menuHead->next;
             
+            menuHead->text->fontSize = 70;
+            menuHead->text->position.x = GetTextCenterPositionOnScreen(*(menuHead->text)).x;
         }
-
-        playButton.text.position.x = GetTextCenterPositionOnScreen(playButton.text).x;
-        exitButton.text.position.x = GetTextCenterPositionOnScreen(exitButton.text).x;
 
         //Draw Text
         DrawTextWithStuct(menuTitle);
-        DrawTextWithStuct(playButton.text);
-        DrawTextWithStuct(exitButton.text);
+        DrawTextWithStuct(playButton);
+        DrawTextWithStuct(exitButton);
         EndDrawing();
     }
     // Cleanup
