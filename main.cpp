@@ -15,18 +15,6 @@ struct Text
     bool visible = true;
 };
 
-struct TextListNode 
-    {
-        Text* text;
-        TextListNode* next;
-        TextListNode* before;
-        TextListNode() : text(nullptr), next(nullptr), before(nullptr) {}
-        TextListNode(Text* text) : text(text), next(nullptr), before(nullptr) {}
-        TextListNode(Text* text, TextListNode *next) : text(text), next(next), before(nullptr) {}
-        TextListNode(Text* text, TextListNode *next, TextListNode* before) : text(text), next(next), before(before) {}
-    };
-
-
 /**
  * Calculates the centre position on the screen from the given text and font size.
  * 
@@ -47,14 +35,15 @@ Vector2 GetTextCenterPositionOnScreen(const Text text)
 class Menu
 {
     private:
-    int m_currentOptionIndex = 0;
-    const int m_fontEnlargment = 0;
+    int m_fontEnlargment = 0;
     std::vector<Text> m_options;
 
     public:
+    int m_currentOptionIndex = 0;
     // Constructor
     Menu(std::vector<Text> options, int fontEnlargment) 
     {   
+        m_fontEnlargment = fontEnlargment;
         m_options = options;
         m_options[m_currentOptionIndex].fontSize += fontEnlargment;
     }
@@ -115,7 +104,7 @@ int main(int argc, const char **argv)
     exitButton.position.y = playButton.position.y + 100;
 
     Menu mainMenu({playButton, exitButton}, 20);
-    
+
     // Main loop
     while(!WindowShouldClose()) 
     {
@@ -128,6 +117,8 @@ int main(int argc, const char **argv)
         else if (IsKeyPressed(KEY_UP)) mainMenu.ChangeToPreviousOption();
         mainMenu.Render();
 
+
+        DrawTextWithStuct(menuTitle);
         EndDrawing();
     }
     // Cleanup
