@@ -115,15 +115,7 @@ int main(int argc, const char **argv)
     exitButton.position.y = playButton.position.y + 100;
 
     Menu mainMenu({playButton, exitButton}, 20);
-
-    // Circular Linked List
-    TextListNode playButtonNode = {&playButton};
-    TextListNode exitButtonNode = {&exitButton, &playButtonNode, &playButtonNode};
-    playButtonNode.next = &exitButtonNode;
-    playButtonNode.before = &exitButtonNode;
     
-    TextListNode* menuHead = &playButtonNode;
-
     // Main loop
     while(!WindowShouldClose()) 
     {
