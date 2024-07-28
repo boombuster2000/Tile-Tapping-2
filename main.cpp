@@ -115,9 +115,13 @@ int main(int argc, const char **argv)
 
         if (IsKeyPressed(KEY_DOWN)) mainMenu.ChangeToNextOption();
         else if (IsKeyPressed(KEY_UP)) mainMenu.ChangeToPreviousOption();
+        else if (IsKeyPressed(KEY_ENTER))
+        {
+            Text currentOption = mainMenu.GetCurrentOption();
+            if (currentOption.text == "Exit") break;
+        }
+        
         mainMenu.Render();
-
-
         DrawTextWithStuct(menuTitle);
         EndDrawing();
     }
