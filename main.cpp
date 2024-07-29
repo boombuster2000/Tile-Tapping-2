@@ -41,6 +41,8 @@ class Menu
 
     public:
     int m_currentOptionIndex = 0;
+    int m_shouldRender = true;
+
     // Constructor
     Menu(std::vector<Text> options, int fontEnlargment) 
     {   
@@ -77,6 +79,8 @@ class Menu
 
     void Render()
     {
+        if (!m_shouldRender) return;
+
         for (auto option:m_options)
         {
             option.position.x = GetTextCenterPositionOnScreen(option).x;
@@ -111,9 +115,18 @@ class Game
         }
     }
 
-    void render()
+    void Render()
     {
-        
+        int tilesRendered = 0;
+
+        for (std::vector row : m_tiles)
+        {
+            for (m_tile tile : row)
+            {
+                DrawRectangle(100*tilesRendered, 100*tilesRendered, tile.width, tile.height, tile.colour);
+                tilesRendered++;
+            }
+        }
     }
 };
 
@@ -135,7 +148,11 @@ int main(int argc, const char **argv)
     exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
     exitButton.position.y = playButton.position.y + 100;
 
+    // Define Classes
     Menu mainMenu({playButton, exitButton}, 20);
+    Game game;
+
+    bool gameStarted = false;
 
     // Main loop
     while(!WindowShouldClose()) 
@@ -151,8 +168,18 @@ int main(int argc, const char **argv)
         {
             Text currentOption = mainMenu.GetCurrentOption();
             if (currentOption.text == "Exit") break;
-            else if (currentOption.text == playButton.text); 
+            else if (currentOption.text == playButton.text) {
+                gameStarted = true;
+                mainMenu.m_shouldRender = false; 
+            }
         }
+        
+
+        if (gameStarted)
+        {
+            game.Render();
+        }
+
         
         mainMenu.Render();
         DrawTextWithStuct(menuTitle);
