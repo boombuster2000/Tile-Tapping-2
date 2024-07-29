@@ -88,12 +88,33 @@ class Menu
 class Game
 {
     private:
-    struct tile
+    struct m_tile
     {
         int width, height;
         Color colour;
     };
     
+    std::vector<std::vector<m_tile>> m_tiles;
+    public:
+
+    // Constructor
+    Game()
+    {
+        for (int y = 0; y<3; y++)
+        {
+            std::vector<m_tile> row;
+            for (int x = 0; x<3; x++)
+            {
+                row.push_back(m_tile{100, 100, PURPLE});
+            }
+            m_tiles.push_back(row);
+        }
+    }
+
+    void render()
+    {
+        
+    }
 };
 
 int main(int argc, const char **argv) 
