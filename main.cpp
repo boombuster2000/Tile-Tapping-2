@@ -32,6 +32,7 @@ Vector2 GetTextCenterPositionOnScreen(const Text text)
     return {((float)GetScreenWidth()/2) - offset, (float)GetScreenHeight()/2};
 }
 
+
 class Menu
 {
     private:
@@ -84,6 +85,16 @@ class Menu
     }
 };
 
+class Game
+{
+    private:
+    struct tile
+    {
+        int width, height;
+        Color colour;
+    };
+    
+};
 
 int main(int argc, const char **argv) 
 { 
@@ -119,6 +130,7 @@ int main(int argc, const char **argv)
         {
             Text currentOption = mainMenu.GetCurrentOption();
             if (currentOption.text == "Exit") break;
+            else if (currentOption.text == playButton.text); 
         }
         
         mainMenu.Render();
