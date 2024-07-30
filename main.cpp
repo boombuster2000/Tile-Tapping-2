@@ -99,8 +99,19 @@ class Game
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
 
-    public:
+    private:
 
+    Vector2 GetGridSize(std::vector<std::vector<m_tile>> m_tiles)
+    {
+        Vector2 gridSize = {0,0};
+
+        gridSize.x += (m_tiles[0][m_tiles[0].size()-1].padding_x + m_tiles[0][m_tiles[0].size()-1].width) * m_tiles[0].size();
+        gridSize.y += (m_tiles[m_tiles.size()-1][0].padding_y + m_tiles[m_tiles[0].size()-1][0].height) * m_tiles.size();
+        
+        return gridSize;
+    }
+
+    public:
     // Constructor
     Game()
     {
@@ -109,7 +120,7 @@ class Game
             std::vector<m_tile> row;
             for (int x = 0; x<3; x++)
             {
-                row.push_back(m_tile{100, 100, 20, 20, PURPLE});
+                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
             }
             m_tiles.push_back(row);
         }
@@ -128,16 +139,17 @@ class Game
 
     void Render()
     {
-        int offset_x = 475;
-        int offset_y = 250;
+        Vector2 grid_size = GetGridSize(m_tiles);
+        int offset_x = WINDOW_WIDTH/2 - (grid_size.x/4);
+        int offset_y = WINDOW_HEIGHT/2 - (grid_size.y/4);
 
         for (int y = 0; y<m_tiles.size(); y++)
         {
             for (int x = 0; x<m_tiles[y].size(); x++)
             {
                 m_tile tile = m_tiles[y][x];
-                int x_coord = 100*x + tile.padding_x*x + offset_x;
-                int y_coord = 100*y + tile.padding_y*y + offset_y;
+                int x_coord = tile.padding_x*x + offset_x;
+                int y_coord = tile.padding_y*y + offset_y;
 
                 DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
             }
