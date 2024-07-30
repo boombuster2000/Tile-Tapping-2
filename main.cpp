@@ -92,6 +92,7 @@ class Game
     struct m_tile
     {
         int width, height;
+        int padding_x, padding_y;
         Color colour;
     };
     
@@ -108,7 +109,7 @@ class Game
             std::vector<m_tile> row;
             for (int x = 0; x<3; x++)
             {
-                row.push_back(m_tile{100, 100, PURPLE});
+                row.push_back(m_tile{100, 100, 20, 20, PURPLE});
             }
             m_tiles.push_back(row);
         }
@@ -127,14 +128,18 @@ class Game
 
     void Render()
     {
-        int tilesRendered = 0;
+        int offset_x = 475;
+        int offset_y = 250;
 
-        for (std::vector row : m_tiles)
+        for (int y = 0; y<m_tiles.size(); y++)
         {
-            for (m_tile tile : row)
+            for (int x = 0; x<m_tiles[y].size(); x++)
             {
-                DrawRectangle(100*tilesRendered, 100*tilesRendered, tile.width, tile.height, tile.colour);
-                tilesRendered++;
+                m_tile tile = m_tiles[y][x];
+                int x_coord = 100*x + tile.padding_x*x + offset_x;
+                int y_coord = 100*y + tile.padding_y*y + offset_y;
+
+                DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
             }
         }
     }
