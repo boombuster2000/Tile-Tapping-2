@@ -94,6 +94,7 @@ class Game
         int width, height;
         int padding_x, padding_y;
         Color colour;
+        bool visible = false;
     };
     
     std::vector<std::vector<m_tile>> m_tiles;
@@ -149,6 +150,8 @@ class Game
             for (int x = 0; x<m_tiles[y].size(); x++)
             {
                 m_tile tile = m_tiles[y][x];
+                if (!tile.visible) continue;
+                
                 int x_coord = tile.padding_x*x + offset_x;
                 int y_coord = tile.padding_y*y + offset_y;
 
@@ -187,7 +190,6 @@ int main(int argc, const char **argv)
         ClearBackground(RAYWHITE);
         
         // Menu Input Handling
-
         if (IsKeyPressed(KEY_DOWN)) mainMenu.ChangeToNextOption();
         else if (IsKeyPressed(KEY_UP)) mainMenu.ChangeToPreviousOption();
         else if (IsKeyPressed(KEY_ENTER))
@@ -206,6 +208,7 @@ int main(int argc, const char **argv)
         DrawTextWithStuct(menuTitle);
         EndDrawing();
     }
+
     // Cleanup
     CloseWindow();
     return 0;
