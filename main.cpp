@@ -123,9 +123,9 @@ class Game
         return gridSize;
     }
 
-    std::set<int> GetInvisbleTilesIndexes(std::vector<std::vector<m_tile>> m_tiles, int numberOfInvisibleTiles)
+    std::set<int> GetInvisbleTilesIndexes(const int tilesWide, const int tilesTall, const int numberOfInvisibleTiles)
     {
-        int numberOfTiles = m_tiles.size() * m_tiles[0].size();
+        int numberOfTiles = tilesWide * tilesTall;
         
         if (numberOfTiles <= numberOfInvisibleTiles) throw std::invalid_argument("Number of invisible Tiles can not be larger than number of tiles.");
 
@@ -151,19 +151,24 @@ class Game
     {
         if (m_isGameRunning) return;
 
+        const int tilesTall = 3;
+        const int tilesWide = 3;
+        
+        std::set<int> invisibleTilesIndexes = GetInvisbleTilesIndexes(tilesWide, tilesTall, 3);
 
-        for (int y = 0; y<3; y++)
+        int iterations = 0;
+        for (int y = 0; y<tilesTall; y++)
         {
             std::vector<m_tile> row;
-            for (int x = 0; x<3; x++)
+            for (int x = 0; x<tilesWide; x++)
             {
-                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
+                bool visible = invisibleTilesIndexes.find(iterations) == invisibleTilesIndexes.end();
+                row.push_back(m_tile{100, 100, 120, 120, PURPLE, visible});
+                iterations++;
             }
             m_tiles.push_back(row);
         }
 
-        std::set<int> invisibleTilesIndexes = GetInvisbleTilesIndexes(m_tiles, 3);
-        
         m_isGameRunning = true;
     }
 
