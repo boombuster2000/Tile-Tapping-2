@@ -99,18 +99,6 @@ class Game
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
 
-    private:
-
-    Vector2 GetGridSize(std::vector<std::vector<m_tile>> m_tiles)
-    {
-        Vector2 gridSize = {0,0};
-
-        gridSize.x += (m_tiles[0][m_tiles[0].size()-1].padding_x + m_tiles[0][m_tiles[0].size()-1].width) * m_tiles[0].size();
-        gridSize.y += (m_tiles[m_tiles.size()-1][0].padding_y + m_tiles[m_tiles[0].size()-1][0].height) * m_tiles.size();
-        
-        return gridSize;
-    }
-
     public:
     // Constructor
     Game()
@@ -126,6 +114,19 @@ class Game
         }
     }
 
+
+    private:
+    Vector2 GetGridSize(std::vector<std::vector<m_tile>> m_tiles)
+    {
+        Vector2 gridSize = {0,0};
+
+        gridSize.x += (m_tiles[0][0].padding_x + m_tiles[0][0].width) * m_tiles[0].size();
+        gridSize.y += (m_tiles[0][0].padding_y + m_tiles[0][0].height) * m_tiles.size();
+        
+        return gridSize;
+    }
+
+    public:
     void Start()
     {
         m_isGameRunning = true;
