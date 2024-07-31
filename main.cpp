@@ -104,15 +104,7 @@ class Game
     // Constructor
     Game()
     {
-        for (int y = 0; y<3; y++)
-        {
-            std::vector<m_tile> row;
-            for (int x = 0; x<3; x++)
-            {
-                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
-            }
-            m_tiles.push_back(row);
-        }
+        
     }
 
 
@@ -130,6 +122,18 @@ class Game
     public:
     void Start()
     {
+        if (m_isGameRunning) return;
+        
+        for (int y = 0; y<3; y++)
+        {
+            std::vector<m_tile> row;
+            for (int x = 0; x<3; x++)
+            {
+                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
+            }
+            m_tiles.push_back(row);
+        }
+
         m_isGameRunning = true;
     }
 
@@ -151,7 +155,7 @@ class Game
             {
                 m_tile tile = m_tiles[y][x];
                 if (!tile.visible) continue;
-                
+
                 int x_coord = tile.padding_x*x + offset_x;
                 int y_coord = tile.padding_y*y + offset_y;
 
