@@ -2,6 +2,7 @@
 #include "vector"
 #include <random>
 #include <set>
+#include <stdexcept>
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -126,7 +127,7 @@ class Game
     {
         int numberOfTiles = m_tiles.size() * m_tiles[0].size();
         
-        if (numberOfTiles <= numberOfInvisibleTiles) return;
+        if (numberOfTiles <= numberOfInvisibleTiles) throw std::invalid_argument("Number of invisible Tiles can not be larger than number of tiles.");
 
          // Random number generation setup
         std::random_device rd; // Seed for the random number engine
@@ -150,7 +151,6 @@ class Game
     {
         if (m_isGameRunning) return;
 
-        std::vector<int> notVisibleTilesIndex;
 
         for (int y = 0; y<3; y++)
         {
@@ -162,7 +162,8 @@ class Game
             m_tiles.push_back(row);
         }
 
-
+        std::set<int> invisibleTilesIndexes = GetInvisbleTilesIndexes(m_tiles, 3);
+        
         m_isGameRunning = true;
     }
 
