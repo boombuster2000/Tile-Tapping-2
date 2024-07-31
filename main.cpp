@@ -1,5 +1,8 @@
 #include "raylib.h"
 #include "vector"
+#include <random>
+#include <set>
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define WINDOW_TITLE "Tile Tapping 2"
@@ -94,7 +97,7 @@ class Game
         int width, height;
         int padding_x, padding_y;
         Color colour;
-        bool visible = false;
+        bool visible = true;
     };
     
     std::vector<std::vector<m_tile>> m_tiles;
@@ -119,11 +122,36 @@ class Game
         return gridSize;
     }
 
+    std::set<int> GetInvisbleTilesIndexes(std::vector<std::vector<m_tile>> m_tiles, int numberOfInvisibleTiles)
+    {
+        int numberOfTiles = m_tiles.size() * m_tiles[0].size();
+        
+        if (numberOfTiles <= numberOfInvisibleTiles) return;
+
+         // Random number generation setup
+        std::random_device rd; // Seed for the random number engine
+        std::mt19937 gen(rd()); // Mersenne Twister engine
+        std::uniform_int_distribution<> dis(0, numberOfTiles-1); //range, inclusive
+
+        // Set to store unique numbers
+        std::set<int> randomIndexes;
+
+        // Generate unique random numbers
+        while (randomIndexes.size() < numberOfInvisibleTiles) {
+            int num = dis(gen);
+            randomIndexes.insert(num);
+        }
+
+        return randomIndexes;
+    }
+
     public:
     void Start()
     {
         if (m_isGameRunning) return;
-        
+
+        std::vector<int> notVisibleTilesIndex;
+
         for (int y = 0; y<3; y++)
         {
             std::vector<m_tile> row;
@@ -133,6 +161,7 @@ class Game
             }
             m_tiles.push_back(row);
         }
+
 
         m_isGameRunning = true;
     }
