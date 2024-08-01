@@ -103,6 +103,10 @@ class Game
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
 
+    const int m_tilesTall = 3;
+    const int m_tilesWide = 3;
+    std::set<int> m_invisibleTilesIndexes;
+
     public:
     // Constructor
     Game()
@@ -116,15 +120,15 @@ class Game
     {
         Vector2 gridSize = {0,0};
 
-        gridSize.x += (m_tiles[0][0].padding_x + m_tiles[0][0].width) * m_tiles[0].size();
-        gridSize.y += (m_tiles[0][0].padding_y + m_tiles[0][0].height) * m_tiles.size();
+        gridSize.x += (m_tiles[0][0].padding_x + m_tiles[0][0].width) * m_tilesWide;
+        gridSize.y += (m_tiles[0][0].padding_y + m_tiles[0][0].height) * m_tilesTall;
         
         return gridSize;
     }
 
-    std::set<int> GetInvisbleTilesIndexes(const int tilesWide, const int tilesTall, const int numberOfInvisibleTiles)
+    std::set<int> GetInvisbleTilesIndexes(const int numberOfInvisibleTiles)
     {
-        int numberOfTiles = tilesWide * tilesTall;
+        int numberOfTiles = m_tilesWide * m_tilesTall;
         
         if (numberOfTiles <= numberOfInvisibleTiles) throw std::invalid_argument("Number of invisible Tiles can not be larger than number of tiles.");
 
@@ -149,19 +153,16 @@ class Game
     void Start()
     {
         if (m_isGameRunning) return;
-
-        const int tilesTall = 3;
-        const int tilesWide = 3;
+        m_invisibleTilesIndexes = GetInvisbleTilesIndexes(3);
         
-        std::set<int> invisibleTilesIndexes = GetInvisbleTilesIndexes(tilesWide, tilesTall, 3);
 
         int iterations = 0;
-        for (int y = 0; y<tilesTall; y++)
+        for (int y = 0; y<m_tilesTall; y++)
         {
             std::vector<m_tile> row;
-            for (int x = 0; x<tilesWide; x++)
+            for (int x = 0; x<m_tilesWide; x++)
             {
-                bool visible = invisibleTilesIndexes.find(iterations) == invisibleTilesIndexes.end();
+                bool visible = m_invisibleTilesIndexes.find(iterations) == m_invisibleTilesIndexes.end();
                 row.push_back(m_tile{100, 100, 120, 120, PURPLE, visible});
                 iterations++;
             }
@@ -178,6 +179,7 @@ class Game
 
     void ProcessKeysPressed()
     {
+
         if (IsKeyPressed(KEY_KP_7))
         {
             m_tiles[0][0].visible = false;
