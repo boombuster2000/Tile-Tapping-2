@@ -202,18 +202,19 @@ class Game
     {
 
         Vector2 tilePressedCoords;
-
+                                                            //x,y
         if (IsKeyPressed(KEY_KP_7)) tilePressedCoords = {0,0};
-        else if (IsKeyPressed(KEY_KP_8)) tilePressedCoords = {0,1};
-        else if (IsKeyPressed(KEY_KP_9)) tilePressedCoords = {0,2};
-        else if (IsKeyPressed(KEY_KP_4)) tilePressedCoords = {1,0};
+        else if (IsKeyPressed(KEY_KP_8)) tilePressedCoords = {1,0};
+        else if (IsKeyPressed(KEY_KP_9)) tilePressedCoords = {2,0};
+        else if (IsKeyPressed(KEY_KP_4)) tilePressedCoords = {0,1};
         else if (IsKeyPressed(KEY_KP_5)) tilePressedCoords = {1,1};
-        else if (IsKeyPressed(KEY_KP_6)) tilePressedCoords = {1,2};
-        else if (IsKeyPressed(KEY_KP_1)) tilePressedCoords = {2,0};
-        else if (IsKeyPressed(KEY_KP_2)) tilePressedCoords = {2,1};
+        else if (IsKeyPressed(KEY_KP_6)) tilePressedCoords = {2,1};
+        else if (IsKeyPressed(KEY_KP_1)) tilePressedCoords = {0,2};
+        else if (IsKeyPressed(KEY_KP_2)) tilePressedCoords = {1,2};
         else if (IsKeyPressed(KEY_KP_3)) tilePressedCoords = {2,2};
         else return;
 
+        if (!m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible) return;
         m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible = false;
 
     
