@@ -36,7 +36,6 @@ Vector2 GetTextCenterPositionOnScreen(const Text text)
     return {((float)GetScreenWidth()/2) - offset, (float)GetScreenHeight()/2};
 }
 
-
 class Menu
 {
     private:
@@ -172,11 +171,50 @@ class Game
         m_isGameRunning = true;
     }
 
-    bool isGameRunning()
+    bool IsGameRunning()
     {
         return m_isGameRunning;
     }
 
+    void ProcessKeysPressed()
+    {
+        if (IsKeyPressed(KEY_KP_7))
+        {
+            m_tiles[0][0].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_8))
+        {
+            m_tiles[0][1].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_9))
+        {
+            m_tiles[0][2].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_4))
+        {
+            m_tiles[1][0].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_5))
+        {
+            m_tiles[1][1].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_6))
+        {
+            m_tiles[1][2].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_1))
+        {
+            m_tiles[2][0].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_2))
+        {
+            m_tiles[2][1].visible = false;
+        }
+        else if (IsKeyPressed(KEY_KP_3))
+        {
+            m_tiles[2][2].visible = false;
+        }
+    }
 
     void Render()
     {
@@ -240,9 +278,12 @@ int main(int argc, const char **argv)
             }
         }
         
-        if (!game.isGameRunning()) mainMenu.Render();
-        else game.Render();
-
+        if (!game.IsGameRunning()) mainMenu.Render();
+        else 
+        {
+            game.ProcessKeysPressed();
+            game.Render();
+        }
 
         DrawTextWithStuct(menuTitle);
         EndDrawing();
