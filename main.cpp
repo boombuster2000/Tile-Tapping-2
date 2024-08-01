@@ -105,7 +105,7 @@ class Game
 
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
-    std::set<int> m_invisibleTilesIndexes;
+    std::vector<int> m_invisibleTilesIndexes;
 
     public:
     // Constructor
@@ -126,7 +126,7 @@ class Game
         return gridSize;
     }
 
-    std::set<int> GetInvisbleTilesIndexes(const int numberOfInvisibleTiles)
+    std::vector<int> GetInvisbleTilesIndexes(const int numberOfInvisibleTiles)
     {
         int numberOfTiles = m_tilesWide * m_tilesTall;
         
@@ -146,7 +146,8 @@ class Game
             randomIndexes.insert(num);
         }
 
-        return randomIndexes;
+        std::vector<int> indexes(randomIndexes.begin(), randomIndexes.end());
+        return indexes;
     }
 
     Vector2 Get2DIndexFrom1DIndex(int index)
@@ -173,11 +174,16 @@ class Game
             std::vector<m_tile> row;
             for (int x = 0; x<m_tilesWide; x++)
             {
-                bool visible = m_invisibleTilesIndexes.find(iterations) == m_invisibleTilesIndexes.end();
-                row.push_back(m_tile{100, 100, 120, 120, PURPLE, visible});
+                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
                 iterations++;
             }
             m_tiles.push_back(row);
+        }
+
+        for (int index:m_invisibleTilesIndexes)
+        {
+            Vector2 indexes = Get2DIndexFrom1DIndex(index);
+            m_tiles[indexes.y][indexes.x].visible = false;
         }
 
         m_isGameRunning = true;
@@ -191,42 +197,49 @@ class Game
     void ProcessKeysPressed()
     {
 
+        Vector2 tilePressed;
+
         if (IsKeyPressed(KEY_KP_7))
         {
+            tilePressed = {0,0};
             m_tiles[0][0].visible = false;
+            Vector2 indexes = Get2DIndexFrom1DIndex(m_invisibleTilesIndexes[0]);
+            m_tiles[indexes.y][indexes.x].visible = true;
+
+            
             
         }
         else if (IsKeyPressed(KEY_KP_8))
         {
-            m_tiles[0][1].visible = false;
+            tilePressed = {0,1};
         }
         else if (IsKeyPressed(KEY_KP_9))
         {
-            m_tiles[0][2].visible = false;
+            tilePressed = {0,2};
         }
         else if (IsKeyPressed(KEY_KP_4))
         {
-            m_tiles[1][0].visible = false;
+            tilePressed = {1,0};
         }
         else if (IsKeyPressed(KEY_KP_5))
         {
-            m_tiles[1][1].visible = false;
+            tilePressed = {1,1};
         }
         else if (IsKeyPressed(KEY_KP_6))
         {
-            m_tiles[1][2].visible = false;
+            tilePressed = {1,2};
         }
         else if (IsKeyPressed(KEY_KP_1))
         {
-            m_tiles[2][0].visible = false;
+            tilePressed = {2,0};
         }
         else if (IsKeyPressed(KEY_KP_2))
         {
-            m_tiles[2][1].visible = false;
+            tilePressed = {2,1};
         }
         else if (IsKeyPressed(KEY_KP_3))
         {
-            m_tiles[2][2].visible = false;
+            tilePressed = {2,2};
         }
     }
 
