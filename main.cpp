@@ -106,7 +106,7 @@ class Game
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
     std::vector<int> m_invisibleTilesIndexes;
-
+    
     public:
     // Constructor
     Game()
@@ -160,6 +160,10 @@ class Game
         return indexes;
     }
 
+    int Get1DIndexFrom2DIndex(Vector2 indexes)
+    {
+        return (indexes.y*3)+indexes.x;
+    }
 
     public:
     void Start()
@@ -194,53 +198,35 @@ class Game
         return m_isGameRunning;
     }
 
-    void ProcessKeysPressed()
+    void ProcessKeyPressed()
     {
 
-        Vector2 tilePressed;
+        Vector2 tilePressedCoords;
 
-        if (IsKeyPressed(KEY_KP_7))
-        {
-            tilePressed = {0,0};
-            m_tiles[0][0].visible = false;
-            Vector2 indexes = Get2DIndexFrom1DIndex(m_invisibleTilesIndexes[0]);
-            m_tiles[indexes.y][indexes.x].visible = true;
+        if (IsKeyPressed(KEY_KP_7)) tilePressedCoords = {0,0};
+        else if (IsKeyPressed(KEY_KP_8)) tilePressedCoords = {0,1};
+        else if (IsKeyPressed(KEY_KP_9)) tilePressedCoords = {0,2};
+        else if (IsKeyPressed(KEY_KP_4)) tilePressedCoords = {1,0};
+        else if (IsKeyPressed(KEY_KP_5)) tilePressedCoords = {1,1};
+        else if (IsKeyPressed(KEY_KP_6)) tilePressedCoords = {1,2};
+        else if (IsKeyPressed(KEY_KP_1)) tilePressedCoords = {2,0};
+        else if (IsKeyPressed(KEY_KP_2)) tilePressedCoords = {2,1};
+        else if (IsKeyPressed(KEY_KP_3)) tilePressedCoords = {2,2};
+        else return;
 
-            
-            
-        }
-        else if (IsKeyPressed(KEY_KP_8))
-        {
-            tilePressed = {0,1};
-        }
-        else if (IsKeyPressed(KEY_KP_9))
-        {
-            tilePressed = {0,2};
-        }
-        else if (IsKeyPressed(KEY_KP_4))
-        {
-            tilePressed = {1,0};
-        }
-        else if (IsKeyPressed(KEY_KP_5))
-        {
-            tilePressed = {1,1};
-        }
-        else if (IsKeyPressed(KEY_KP_6))
-        {
-            tilePressed = {1,2};
-        }
-        else if (IsKeyPressed(KEY_KP_1))
-        {
-            tilePressed = {2,0};
-        }
-        else if (IsKeyPressed(KEY_KP_2))
-        {
-            tilePressed = {2,1};
-        }
-        else if (IsKeyPressed(KEY_KP_3))
-        {
-            tilePressed = {2,2};
-        }
+        m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible = false;
+
+    
+        // Random number generation setup
+        std::random_device rd; // Seed for the random number engine
+        std::mt19937 gen(rd()); // Mersenne Twister engine
+        std::uniform_int_distribution<> dis(0, m_invisibleTilesIndexes.size()-1); //range, inclusive
+        int indexToSwap = dis(gen);
+
+        Vector2 newVisibleTileIndexes = Get2DIndexFrom1DIndex(m_invisibleTilesIndexes[indexToSwap]);
+        m_tiles[newVisibleTileIndexes.y][newVisibleTileIndexes.x].visible = true;
+        m_invisibleTilesIndexes[indexToSwap] = Get1DIndexFrom2DIndex(tilePressedCoords);
+
     }
 
     void Render()
@@ -308,7 +294,7 @@ int main(int argc, const char **argv)
         if (!game.IsGameRunning()) mainMenu.Render();
         else 
         {
-            game.ProcessKeysPressed();
+            game.ProcessKeyPressed();
             game.Render();
         }
 
