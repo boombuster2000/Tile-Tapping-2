@@ -149,6 +149,17 @@ class Game
         return randomIndexes;
     }
 
+    Vector2 Get2DIndexFrom1DIndex(int index)
+    {  
+        Vector2 indexes;
+
+        indexes.y = (int)index/3;
+        indexes.x = index%3;
+
+        return indexes;
+    }
+
+
     public:
     void Start()
     {
@@ -183,6 +194,7 @@ class Game
         if (IsKeyPressed(KEY_KP_7))
         {
             m_tiles[0][0].visible = false;
+            
         }
         else if (IsKeyPressed(KEY_KP_8))
         {
