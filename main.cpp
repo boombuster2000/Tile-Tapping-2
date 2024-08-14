@@ -100,16 +100,26 @@ class Game
         bool visible = true;
     };
     
-    Text m_TilesTappedText = {
-        "",
+    Text m_tilesTappedText = {
+        "0",
         75,
         PURPLE,
         {900, 200},
         true
     };
 
+    Text m_gameOverMessage = {
+        "Game Over! Your Score was",
+        75,
+        PURPLE,
+        GetTextCenterPositionOnScreen(m_gameOverMessage),
+        true
+    };
+
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
+    bool m_missedTileThisFrame = false;
+    bool m_endGame = false;
     int m_tilesTapped = 0;
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
@@ -178,7 +188,7 @@ class Game
     {
         if (m_isGameRunning) return;
         m_invisibleTilesIndexes = GetInvisbleTilesIndexes(3);
-        
+        m_endGame = false;
 
         int iterations = 0;
         for (int y = 0; y<m_tilesTall; y++)
@@ -201,13 +211,26 @@ class Game
         m_isGameRunning = true;
     }
 
+    void End()
+    {
+        m_endGame = true;
+    }
+
     bool IsGameRunning()
     {
         return m_isGameRunning;
     }
 
-    void ProcessKeyPressed()
+    bool MissedTileThisFrame()
     {
+        return m_missedTileThisFrame;
+    }
+
+    void ProcessKeyPressed()
+    {   
+        
+        if (IsKeyPressed(KEY_ENTER) && m_endGame) m_isGameRunning = false;
+        if (m_endGame) return;
 
         Vector2 tilePressedCoords;
                                                             //x,y
@@ -220,11 +243,16 @@ class Game
         else if (IsKeyPressed(KEY_KP_1)) tilePressedCoords = {0,2};
         else if (IsKeyPressed(KEY_KP_2)) tilePressedCoords = {1,2};
         else if (IsKeyPressed(KEY_KP_3)) tilePressedCoords = {2,2};
-        else return;
+        else return; // A key must have been pressed to continue
 
-        if (!m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible) return;
+        if (!m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible)
+        {
+            m_missedTileThisFrame = true;
+            return;
+        };
+
+        m_missedTileThisFrame = false;
         m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible = false;
-
         m_tilesTapped++;
     
         // Random number generation setup
@@ -241,26 +269,36 @@ class Game
 
     void Render()
     {
-        Vector2 grid_size = GetGridSize(m_tiles);
-        int offset_x = WINDOW_WIDTH/2 - (grid_size.x/4);
-        int offset_y = WINDOW_HEIGHT/2 - (grid_size.y/4);
+        if (m_endGame){
+            DrawTextWithStuct(m_gameOverMessage);
 
-        for (int y = 0; y<m_tiles.size(); y++)
-        {
-            for (int x = 0; x<m_tiles[y].size(); x++)
-            {
-                m_tile tile = m_tiles[y][x];
-                if (!tile.visible) continue;
-
-                int x_coord = tile.padding_x*x + offset_x;
-                int y_coord = tile.padding_y*y + offset_y;
-
-                DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
-            }
+            m_tilesTappedText.position = {GetTextCenterPositionOnScreen(m_tilesTappedText).x, m_gameOverMessage.position.y + 65};
+            m_tilesTappedText.text = std::to_string(m_tilesTapped).c_str();
+            DrawTextWithStuct(m_tilesTappedText);
         }
+        else
+        {       
+            Vector2 grid_size = GetGridSize(m_tiles);
+            int offset_x = WINDOW_WIDTH/2 - (grid_size.x/4);
+            int offset_y = WINDOW_HEIGHT/2 - (grid_size.y/4);
 
-    m_TilesTappedText.text = std::to_string(m_tilesTapped).c_str();
-    DrawTextWithStuct(m_TilesTappedText);
+            for (int y = 0; y<m_tiles.size(); y++)
+            {
+                for (int x = 0; x<m_tiles[y].size(); x++)
+                {
+                    m_tile tile = m_tiles[y][x];
+                    if (!tile.visible) continue;
+
+                    int x_coord = tile.padding_x*x + offset_x;
+                    int y_coord = tile.padding_y*y + offset_y;
+
+                    DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
+                }
+            }
+
+            m_tilesTappedText.text = std::to_string(m_tilesTapped).c_str();
+            DrawTextWithStuct(m_tilesTappedText);
+        }
     }
 };
 
@@ -307,6 +345,7 @@ int main(int argc, const char **argv)
         if (!game.IsGameRunning()) mainMenu.Render();
         else 
         {
+            if (game.MissedTileThisFrame()) game.End();
             game.ProcessKeyPressed();
             game.Render();
         }
