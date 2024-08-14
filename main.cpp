@@ -102,7 +102,7 @@ class Game
     
     Text m_TilesTappedText = {
         "",
-        50,
+        75,
         PURPLE,
         {900, 200},
         true
