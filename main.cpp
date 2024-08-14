@@ -102,7 +102,7 @@ class Game
     
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
-
+    int m_tilesTapped = 0;
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
     std::vector<int> m_invisibleTilesIndexes;
@@ -217,6 +217,7 @@ class Game
         if (!m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible) return;
         m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible = false;
 
+        m_tilesTapped++;
     
         // Random number generation setup
         std::random_device rd; // Seed for the random number engine
@@ -249,6 +250,8 @@ class Game
                 DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
             }
         }
+
+        DrawText(std::to_string(m_tilesTapped).c_str(), 1000, 200, 50, PURPLE);
     }
 };
 
