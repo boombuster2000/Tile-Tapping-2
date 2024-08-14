@@ -100,6 +100,14 @@ class Game
         bool visible = true;
     };
     
+    Text m_TilesTappedText = {
+        "",
+        50,
+        PURPLE,
+        {900, 200},
+        true
+    };
+
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
     int m_tilesTapped = 0;
@@ -251,7 +259,8 @@ class Game
             }
         }
 
-        DrawText(std::to_string(m_tilesTapped).c_str(), 1000, 200, 50, PURPLE);
+    m_TilesTappedText.text = std::to_string(m_tilesTapped).c_str();
+    DrawTextWithStuct(m_TilesTappedText);
     }
 };
 
