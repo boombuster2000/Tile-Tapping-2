@@ -19,6 +19,28 @@ struct Text
     bool visible = true;
 };
 
+struct CountDown
+{
+    private:
+    float timeLeft = 0;
+
+    public:
+    void StartCountDown(float duration)
+    {
+        timeLeft = duration;
+    }
+
+    void UpdateCountDown()
+    {
+        timeLeft -= GetFrameTime();
+    }
+
+    bool IsCountDownDone()
+    {
+        return timeLeft == 0;
+    }
+};
+
 /**
  * Calculates the centre position on the screen from the given text and font size.
  * 
