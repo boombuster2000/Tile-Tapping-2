@@ -25,19 +25,19 @@ struct CountDown
     float timeLeft = 0;
 
     public:
-    void StartCountDown(float duration)
+    void StartCountDown(float duration) //seconds
     {
         timeLeft = duration;
     }
 
     void UpdateCountDown()
     {
-        timeLeft -= GetFrameTime();
+        timeLeft -= GetFrameTime() * !IsCountDownDone();
     }
 
     bool IsCountDownDone()
     {
-        return timeLeft == 0;
+        return timeLeft <= 0;
     }
 };
 
@@ -146,6 +146,7 @@ class Game
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
     std::vector<int> m_invisibleTilesIndexes;
+    
     
     public:
     // Constructor
@@ -357,6 +358,7 @@ int main(int argc, const char **argv)
     // Define Classes
     Menu mainMenu({playButton, exitButton}, 20);
     Game game;
+    CountDown timer;
 
     // Main loop
     while(!WindowShouldClose()) 
@@ -376,14 +378,16 @@ int main(int argc, const char **argv)
                 if (currentOption.text == "Exit") break;
                 else if (currentOption.text == playButton.text) {
                     game.Start();
+                    timer.StartCountDown(5.0F);
                 }
             }
         }
         else 
         {
-            if (game.MissedTileThisFrame()) game.End();
+            if (game.MissedTileThisFrame() || timer.IsCountDownDone()) game.End();
             game.Render();
             game.ProcessKeyPressed();
+            timer.UpdateCountDown();
         }
 
         DrawTextWithStuct(menuTitle);
