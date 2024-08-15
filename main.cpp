@@ -26,7 +26,7 @@ struct CountDown
     float m_timeLeft = 0;
 
     public:
-    Text text = {"Time Left: ", 50, PINK, {500, 500}, false};
+    Text text = {"Time Left: ", 50, PINK, {150, 200}, false};
 
     public: 
     void StartCountDown(float duration) //seconds
@@ -54,7 +54,7 @@ struct CountDown
  * 
  * @return Vector2 of x and y positions.
  * 
- * @warning This function does not calculate true centre for y.
+ * @warning This function does not calculate true centre for y as can not determine text height.
 */
 Vector2 GetTextCenterPositionOnScreen(const Text text)
 {
@@ -131,7 +131,7 @@ class Game
     Text m_tilesTappedText = {
         "0",
         75,
-        PURPLE,
+        PINK,
         {900, 200},
         true
     };
@@ -139,7 +139,7 @@ class Game
     Text m_gameOverMessage = {
         "Game Over! Your Score was",
         75,
-        PURPLE,
+        PINK,
         GetTextCenterPositionOnScreen(m_gameOverMessage),
         true
     };
@@ -153,7 +153,7 @@ class Game
     const int m_tilesWide = 3;
     std::vector<int> m_invisibleTilesIndexes;
     
-    
+
     public:
     // Constructor
     Game()
