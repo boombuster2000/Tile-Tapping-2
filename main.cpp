@@ -3,16 +3,17 @@
 #include <random>
 #include <set>
 #include <stdexcept>
+#include <string>
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 #define WINDOW_TITLE "Tile Tapping 2"
 
-#define DrawTextWithStuct(textToDraw) DrawText(textToDraw.text, textToDraw.position.x, textToDraw.position.y, textToDraw.fontSize, textToDraw.colour);
+#define DrawTextWithStuct(textToDraw) DrawText(textToDraw.text.c_str(), textToDraw.position.x, textToDraw.position.y, textToDraw.fontSize, textToDraw.colour);
 
 struct Text
 {
-    const char* text;
+    std::string text;
     int fontSize;
     Color colour;
     Vector2 position;
@@ -22,22 +23,27 @@ struct Text
 struct CountDown
 {
     private:
-    float timeLeft = 0;
+    float m_timeLeft = 0;
 
     public:
+    Text text = {"Time Left: ", 50, PINK, {500, 500}, false};
+
+    public: 
     void StartCountDown(float duration) //seconds
     {
-        timeLeft = duration;
+        m_timeLeft = duration;
     }
 
     void UpdateCountDown()
     {
-        timeLeft -= GetFrameTime() * !IsCountDownDone();
+        m_timeLeft -= GetFrameTime() * !IsCountDownDone();
+
+        text.text = "Time Left: " + std::to_string((int)m_timeLeft);
     }
 
     bool IsCountDownDone()
     {
-        return timeLeft <= 0;
+        return m_timeLeft <= 0;
     }
 };
 
@@ -52,7 +58,7 @@ struct CountDown
 */
 Vector2 GetTextCenterPositionOnScreen(const Text text)
 {
-    const int textWidth = MeasureText(text.text, text.fontSize);
+    const int textWidth = MeasureText(text.text.c_str(), text.fontSize);
     const float offset = textWidth/2;
 
     return {((float)GetScreenWidth()/2) - offset, (float)GetScreenHeight()/2};
@@ -355,6 +361,9 @@ int main(int argc, const char **argv)
     exitButton.position.x = GetTextCenterPositionOnScreen(exitButton).x;
     exitButton.position.y = playButton.position.y + 100;
 
+
+    
+
     // Define Classes
     Menu mainMenu({playButton, exitButton}, 20);
     Game game;
@@ -379,15 +388,21 @@ int main(int argc, const char **argv)
                 else if (currentOption.text == playButton.text) {
                     game.Start();
                     timer.StartCountDown(5.0F);
+                    timer.text.visible = true;
                 }
             }
         }
         else 
         {
-            if (game.MissedTileThisFrame() || timer.IsCountDownDone()) game.End();
+            if (game.MissedTileThisFrame() || timer.IsCountDownDone()) 
+            {
+                timer.text.visible = false;
+                game.End();
+            }
             game.Render();
             game.ProcessKeyPressed();
             timer.UpdateCountDown();
+            DrawTextWithStuct(timer.text);
         }
 
         DrawTextWithStuct(menuTitle);
