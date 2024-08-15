@@ -119,7 +119,7 @@ class Game
     std::vector<std::vector<m_tile>> m_tiles;
     bool m_isGameRunning = false;
     bool m_missedTileThisFrame = false;
-    bool m_endGame = false;
+    bool m_gameOver = false;
     int m_tilesTapped = 0;
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
@@ -187,8 +187,6 @@ class Game
     void Start()
     {
         if (m_isGameRunning) return;
-        m_invisibleTilesIndexes = GetInvisbleTilesIndexes(3);
-        m_endGame = false;
 
         int iterations = 0;
         for (int y = 0; y<m_tilesTall; y++)
@@ -202,18 +200,19 @@ class Game
             m_tiles.push_back(row);
         }
 
+        
+        m_invisibleTilesIndexes = GetInvisbleTilesIndexes(3);
         for (int index:m_invisibleTilesIndexes)
-        {
-            Vector2 indexes = Get2DIndexFrom1DIndex(index);
-            m_tiles[indexes.y][indexes.x].visible = false;
-        }
-
+            {
+                Vector2 indexes = Get2DIndexFrom1DIndex(index);
+                m_tiles[indexes.y][indexes.x].visible = false;
+            }
         m_isGameRunning = true;
     }
 
     void End()
     {
-        m_endGame = true;
+        m_gameOver = true;
     }
 
     bool IsGameRunning()
@@ -229,8 +228,18 @@ class Game
     void ProcessKeyPressed()
     {   
         
-        if (IsKeyPressed(KEY_ENTER) && m_endGame) m_isGameRunning = false;
-        if (m_endGame) return;
+        if (IsKeyPressed(KEY_ENTER) && m_gameOver) // Ends Game, resets variables.
+        {
+            m_isGameRunning = false; 
+            m_missedTileThisFrame = false;
+            m_gameOver = false;
+            m_tilesTapped = 0;
+            m_invisibleTilesIndexes.clear();
+            m_tiles.clear();
+            return;
+        }
+
+        if (m_gameOver) return; // Keys won't be processed if game is over
 
         Vector2 tilePressedCoords;
                                                             //x,y
@@ -269,7 +278,9 @@ class Game
 
     void Render()
     {
-        if (m_endGame){
+        if (!m_isGameRunning) return;
+
+        if (m_gameOver){
             DrawTextWithStuct(m_gameOverMessage);
 
             m_tilesTappedText.position = {GetTextCenterPositionOnScreen(m_tilesTappedText).x, m_gameOverMessage.position.y + 65};
@@ -297,6 +308,7 @@ class Game
             }
 
             m_tilesTappedText.text = std::to_string(m_tilesTapped).c_str();
+            m_tilesTappedText.position = {900, 200};
             DrawTextWithStuct(m_tilesTappedText);
         }
     }
@@ -330,24 +342,26 @@ int main(int argc, const char **argv)
         BeginDrawing();
         ClearBackground(RAYWHITE);
         
-        // Menu Input Handling
-        if (IsKeyPressed(KEY_DOWN)) mainMenu.ChangeToNextOption();
-        else if (IsKeyPressed(KEY_UP)) mainMenu.ChangeToPreviousOption();
-        else if (IsKeyPressed(KEY_ENTER))
+        if (!game.IsGameRunning())
         {
-            Text currentOption = mainMenu.GetCurrentOption();
-            if (currentOption.text == "Exit") break;
-            else if (currentOption.text == playButton.text) {
-                game.Start();
+            mainMenu.Render();
+            // Menu Input Handling
+            if (IsKeyPressed(KEY_DOWN)) mainMenu.ChangeToNextOption();
+            else if (IsKeyPressed(KEY_UP)) mainMenu.ChangeToPreviousOption();
+            else if (IsKeyPressed(KEY_ENTER))
+            {
+                Text currentOption = mainMenu.GetCurrentOption();
+                if (currentOption.text == "Exit") break;
+                else if (currentOption.text == playButton.text) {
+                    game.Start();
+                }
             }
         }
-        
-        if (!game.IsGameRunning()) mainMenu.Render();
         else 
         {
             if (game.MissedTileThisFrame()) game.End();
-            game.ProcessKeyPressed();
             game.Render();
+            game.ProcessKeyPressed();
         }
 
         DrawTextWithStuct(menuTitle);
