@@ -20,33 +20,6 @@ struct Text
     bool visible = true;
 };
 
-struct CountDown
-{
-    private:
-    float m_timeLeft = 0;
-
-    public:
-    Text text = {"Time Left: ", 50, PINK, {150, 200}, false};
-
-    public: 
-    void StartCountDown(float duration) //seconds
-    {
-        m_timeLeft = duration;
-    }
-
-    void UpdateCountDown()
-    {
-        m_timeLeft -= GetFrameTime() * !IsCountDownDone();
-
-        text.text = "Time Left: " + std::to_string((int)m_timeLeft);
-    }
-
-    bool IsCountDownDone()
-    {
-        return m_timeLeft <= 0;
-    }
-};
-
 /**
  * Calculates the centre position on the screen from the given text and font size.
  * 
@@ -128,6 +101,33 @@ class Game
         bool visible = true;
     };
     
+    struct m_countdown
+{
+    private:
+    float m_timeLeft = 0;
+
+    public:
+    Text text = {"Time Left: ", 50, PINK, {150, 200}, false};
+
+    public: 
+    void Set(float duration) //seconds
+    {
+        m_timeLeft = duration;
+    }
+
+    void Update()
+    {
+        m_timeLeft -= GetFrameTime() * !IsCountdownDone();
+
+        text.text = "Time Left: " + std::to_string((int)m_timeLeft);
+    }
+
+    bool IsCountdownDone()
+    {
+        return m_timeLeft <= 0;
+    }
+};
+
     Text m_tilesTappedText = {
         "0",
         75,
@@ -148,19 +148,21 @@ class Game
     bool m_isGameRunning = false;
     bool m_missedTileThisFrame = false;
     bool m_gameOver = false;
+    bool m_gameFrozen = true;
     int m_tilesTapped = 0;
+    const int m_gameDuration = 10; // seconds
+    const int m_numberOfInvisibleTiles = 3;
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
-    std::vector<int> m_invisibleTilesIndexes;
+    std::vector<Vector2> m_invisibleTilesIndexes;
+    m_countdown m_timer;
     
 
     public:
-    // Constructor
     Game()
     {
         
     }
-
 
     private:
     Vector2 GetGridSize(std::vector<std::vector<m_tile>> m_tiles)
@@ -173,7 +175,7 @@ class Game
         return gridSize;
     }
 
-    std::vector<int> GetInvisbleTilesIndexes(const int numberOfInvisibleTiles)
+    std::vector<Vector2> GetInvisbleTilesIndexes(const int numberOfInvisibleTiles)
     {
         int numberOfTiles = m_tilesWide * m_tilesTall;
         
@@ -189,11 +191,13 @@ class Game
 
         // Generate unique random numbers
         while (randomIndexes.size() < numberOfInvisibleTiles) {
-            int num = dis(gen);
-            randomIndexes.insert(num);
+            int index = dis(gen);
+            randomIndexes.insert(index);
         }
 
-        std::vector<int> indexes(randomIndexes.begin(), randomIndexes.end());
+        std::vector<Vector2> indexes;
+
+        for (int randomIndex: randomIndexes) indexes.push_back(Get2DIndexFrom1DIndex(randomIndex));
         return indexes;
     }
 
@@ -212,30 +216,48 @@ class Game
         return (indexes.y*3)+indexes.x;
     }
 
+    /**
+     * Creates a 2D vector grid of tiles.
+     * 
+     * @param rows Determines height of grid.
+     * 
+     * @param columns Determines width of grid.
+     * 
+     * @param invisibleTiles The indexes of tiles to be invisible.
+     * 
+     * @return Returns a 2D vector populated with m_tile.
+     * 
+    */
+    std::vector<std::vector<m_tile>> InitialiseTiles(int rows, int columns, std::vector<Vector2> invisibleTiles = {})
+    {
+        std::vector<std::vector<m_tile>> tiles;
+        for (int y = 0; y<rows; y++)
+        {
+            std::vector<m_tile> row;
+            for (int x = 0; x<columns; x++) row.push_back(m_tile{100, 100, 120, 120, PURPLE});
+            tiles.push_back(row);
+        }
+
+        for (Vector2 index:invisibleTiles) tiles[index.y][index.x].visible = false;
+  
+        return tiles;
+    }
+
+
     public:
+
+    /**
+     * Initialises all the tiles and sets m_isGameRunning to true which allows the game to run.
+     * @note Game must be ended to start a new one.
+    */
     void Start()
     {
         if (m_isGameRunning) return;
 
-        int iterations = 0;
-        for (int y = 0; y<m_tilesTall; y++)
-        {
-            std::vector<m_tile> row;
-            for (int x = 0; x<m_tilesWide; x++)
-            {
-                row.push_back(m_tile{100, 100, 120, 120, PURPLE});
-                iterations++;
-            }
-            m_tiles.push_back(row);
-        }
-
+        m_invisibleTilesIndexes = GetInvisbleTilesIndexes(m_numberOfInvisibleTiles);
+        m_tiles = InitialiseTiles(m_tilesTall, m_tilesWide, m_invisibleTilesIndexes);
         
-        m_invisibleTilesIndexes = GetInvisbleTilesIndexes(3);
-        for (int index:m_invisibleTilesIndexes)
-            {
-                Vector2 indexes = Get2DIndexFrom1DIndex(index);
-                m_tiles[indexes.y][indexes.x].visible = false;
-            }
+        m_timer.Set(m_gameDuration);
         m_isGameRunning = true;
     }
 
@@ -256,17 +278,6 @@ class Game
 
     void ProcessKeyPressed()
     {   
-        
-        if (IsKeyPressed(KEY_ENTER) && m_gameOver) // Ends Game, resets variables.
-        {
-            m_isGameRunning = false; 
-            m_missedTileThisFrame = false;
-            m_gameOver = false;
-            m_tilesTapped = 0;
-            m_invisibleTilesIndexes.clear();
-            m_tiles.clear();
-            return;
-        }
 
         if (m_gameOver) return; // Keys won't be processed if game is over
 
@@ -299,10 +310,34 @@ class Game
         std::uniform_int_distribution<> dis(0, m_invisibleTilesIndexes.size()-1); //range, inclusive
         int indexToSwap = dis(gen);
 
-        Vector2 newVisibleTileIndexes = Get2DIndexFrom1DIndex(m_invisibleTilesIndexes[indexToSwap]);
+        Vector2 newVisibleTileIndexes = m_invisibleTilesIndexes[indexToSwap];
         m_tiles[newVisibleTileIndexes.y][newVisibleTileIndexes.x].visible = true;
-        m_invisibleTilesIndexes[indexToSwap] = Get1DIndexFrom2DIndex(tilePressedCoords);
+        m_invisibleTilesIndexes[indexToSwap] = tilePressedCoords;
 
+    }
+
+    /**
+     * Processes game actions.
+    */
+    void tick()
+    {
+        if (IsKeyPressed(KEY_ENTER) && m_gameOver) // Ends Game, resets variables.
+        {
+            m_isGameRunning = false; 
+            m_missedTileThisFrame = false;
+            m_gameOver = false;
+            m_tilesTapped = 0;
+            m_invisibleTilesIndexes.clear();
+            m_tiles.clear();
+            return;
+        }
+
+        if (m_gameOver) return;
+
+        ProcessKeyPressed();
+        m_timer.Update();
+
+        if (m_timer.IsCountdownDone()) End();
     }
 
     void Render()
@@ -340,6 +375,8 @@ class Game
             m_tilesTappedText.position = {900, 200};
             DrawTextWithStuct(m_tilesTappedText);
         }
+
+        DrawTextWithStuct(m_timer.text);
     }
 };
 
@@ -362,12 +399,9 @@ int main(int argc, const char **argv)
     exitButton.position.y = playButton.position.y + 100;
 
 
-    
-
     // Define Classes
     Menu mainMenu({playButton, exitButton}, 20);
     Game game;
-    CountDown timer;
 
     // Main loop
     while(!WindowShouldClose()) 
@@ -387,22 +421,17 @@ int main(int argc, const char **argv)
                 if (currentOption.text == "Exit") break;
                 else if (currentOption.text == playButton.text) {
                     game.Start();
-                    timer.StartCountDown(5.0F);
-                    timer.text.visible = true;
                 }
             }
         }
         else 
         {
-            if (game.MissedTileThisFrame() || timer.IsCountDownDone()) 
+            if (game.MissedTileThisFrame()) 
             {
-                timer.text.visible = false;
                 game.End();
             }
+            game.tick();
             game.Render();
-            game.ProcessKeyPressed();
-            timer.UpdateCountDown();
-            DrawTextWithStuct(timer.text);
         }
 
         DrawTextWithStuct(menuTitle);
