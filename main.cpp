@@ -79,7 +79,7 @@ class Menu
 
         m_options[m_currentOptionIndex].fontSize += m_fontEnlargment;
     }
-
+    
     void Render()
     {
         for (auto option:m_options)
@@ -282,16 +282,16 @@ class Game
         if (m_gameOver) return; // Keys won't be processed if game is over
 
         Vector2 tilePressedCoords;
-                                                            //x,y
-        if (IsKeyPressed(KEY_KP_7) || IsKeyPressed(KEY_ONE)) tilePressedCoords = {0,0};
-        else if (IsKeyPressed(KEY_KP_8) || IsKeyPressed(KEY_TWO)) tilePressedCoords = {1,0};
-        else if (IsKeyPressed(KEY_KP_9) || IsKeyPressed(KEY_THREE)) tilePressedCoords = {2,0};
-        else if (IsKeyPressed(KEY_KP_4) || IsKeyPressed(KEY_FOUR)) tilePressedCoords = {0,1};
-        else if (IsKeyPressed(KEY_KP_5) || IsKeyPressed(KEY_FIVE)) tilePressedCoords = {1,1};
-        else if (IsKeyPressed(KEY_KP_6) || IsKeyPressed(KEY_SIX)) tilePressedCoords = {2,1};
-        else if (IsKeyPressed(KEY_KP_1) || IsKeyPressed(KEY_SEVEN)) tilePressedCoords = {0,2};
-        else if (IsKeyPressed(KEY_KP_2) || IsKeyPressed(KEY_EIGHT)) tilePressedCoords = {1,2};
-        else if (IsKeyPressed(KEY_KP_3) || IsKeyPressed(KEY_NINE)) tilePressedCoords = {2,2};
+                                                                                //x,y
+        if (IsKeyPressed(KEY_KP_7) || IsKeyPressed(KEY_Q)) tilePressedCoords = {0,0};
+        else if (IsKeyPressed(KEY_KP_8) || IsKeyPressed(KEY_W)) tilePressedCoords = {1,0};
+        else if (IsKeyPressed(KEY_KP_9) || IsKeyPressed(KEY_E)) tilePressedCoords = {2,0};
+        else if (IsKeyPressed(KEY_KP_4) || IsKeyPressed(KEY_A)) tilePressedCoords = {0,1};
+        else if (IsKeyPressed(KEY_KP_5) || IsKeyPressed(KEY_S)) tilePressedCoords = {1,1};
+        else if (IsKeyPressed(KEY_KP_6) || IsKeyPressed(KEY_D)) tilePressedCoords = {2,1};
+        else if (IsKeyPressed(KEY_KP_1) || IsKeyPressed(KEY_Z)) tilePressedCoords = {0,2};
+        else if (IsKeyPressed(KEY_KP_2) || IsKeyPressed(KEY_X)) tilePressedCoords = {1,2};
+        else if (IsKeyPressed(KEY_KP_3) || IsKeyPressed(KEY_C)) tilePressedCoords = {2,2};
         else return; // A key must have been pressed to continue
 
         if (!m_tiles[tilePressedCoords.y][tilePressedCoords.x].visible)
@@ -419,7 +419,8 @@ int main(int argc, const char **argv)
             {
                 Text currentOption = mainMenu.GetCurrentOption();
                 if (currentOption.text == "Exit") break;
-                else if (currentOption.text == playButton.text) {
+                else if (currentOption.text == playButton.text) 
+                {
                     game.Start();
                 }
             }
