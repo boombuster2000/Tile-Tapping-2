@@ -151,7 +151,7 @@ class Game
     bool m_gameFrozen = true;
     int m_tilesTapped = 0;
     const int m_gameDuration = 10; // seconds
-    const int m_numberOfInvisibleTiles = 3;
+    const int m_numberOfInvisibleTiles = 5;
     const int m_tilesTall = 3;
     const int m_tilesWide = 3;
     std::vector<Vector2> m_invisibleTilesIndexes;
