@@ -99,6 +99,7 @@ class Game
         int padding_x, padding_y;
         Color colour;
         bool visible = true;
+        Texture2D texture = LoadTexture("./textures/tile.png");
     };
     
     struct m_countdown
@@ -367,7 +368,11 @@ class Game
                     int x_coord = tile.padding_x*x + offset_x;
                     int y_coord = tile.padding_y*y + offset_y;
 
-                    DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
+                    float scale = (float)tile.height / (float)tile.texture.height;
+
+                    DrawTextureEx(tile.texture, { (float)x_coord, (float)y_coord }, 0, scale, WHITE);
+                    
+                    //DrawRectangle(x_coord, y_coord, tile.width, tile.height, tile.colour);
                 }
             }
 
