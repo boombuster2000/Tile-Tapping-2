@@ -3,7 +3,6 @@ project(TileTapping2 VERSION 0.1.0 LANGUAGES C CXX)
 
 # Dependencies
 include(FetchContent)
-
 set(RAYLIB_VERSION 5.0)
 FetchContent_Declare(
     raylib
@@ -13,6 +12,8 @@ FetchContent_Declare(
 
 set(BUILD_EXAMPLES OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(raylib)
+
+file(COPY "${CMAKE_SOURCE_DIR}/textures" DESTINATION "${CMAKE_BINARY_DIR}")
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} raylib)
